@@ -23,7 +23,7 @@
     border-radius: 12px;
     max-width: 800px;
   }
-  textarea, input[type="text"] {
+  textarea, input[type="text"], input[type="number"] {
     width: 100%; padding: 8px; margin-top: 5px;
     border-radius: 5px; border: none;
   }
@@ -124,6 +124,8 @@
     <label>3. Data management software?</label><textarea id="adm3"></textarea>
     <label>4. How do you prioritize tasks?</label><textarea id="adm4"></textarea>
     <label>5. Example of correcting error</label><textarea id="adm5"></textarea>
+    <label>6. Rate yourself for the administrative tasks out of 10</label><input type="number" id="adm6" min="0" max="10">
+    <label>7. Rate yourself for the Excel projects and formulas out of 10</label><input type="number" id="adm7" min="0" max="10">
   </section>
 
   <button onclick="submitAll()">Submit All</button>
@@ -205,7 +207,6 @@ function submitAll(){
   clearInterval(timerInterval);
   let duration = Math.floor((Date.now()-startTime)/1000);
 
-  // Excel score
   let score=0;
   for(let key in excelAnswers){
     let val=document.getElementById(key).value.trim();
@@ -242,7 +243,6 @@ function downloadPDF(){
   doc.setFont("helvetica","normal"); doc.setFontSize(12); doc.setTextColor(0,0,0);
   doc.text("Candidate: "+candidate,10,y); y+=10;
 
-  // Typing Results
   const typingQ=[["Typing English 1","The quick brown fox jumps over the lazy dog.","eng1"],
                  ["Typing English 2","Effective communication is key to success.","eng2"],
                  ["Typing Arabic 1","السرعة والدقة في الكتابة أمران مهمان في العمل الإداري اليوم.","arb1"],
@@ -258,7 +258,6 @@ function downloadPDF(){
     y+=4;
   });
 
-  // Excel Questions
   const excelQnA=[
     ["1. What is the shortcut key to copy a cell in Excel?",document.getElementById("q1").value],
     ["2. How do you sum values in a range of cells A1 to A10?",document.getElementById("q2").value],
@@ -283,13 +282,14 @@ function downloadPDF(){
     y+=4;
   });
 
-  // Admin Questions
   const adminQnA=[
     ["1. Describe your previous experience", document.getElementById("adm1").value],
     ["2. How do you ensure accuracy?", document.getElementById("adm2").value],
     ["3. Data management software?", document.getElementById("adm3").value],
     ["4. How do you prioritize tasks?", document.getElementById("adm4").value],
-    ["5. Example of correcting error", document.getElementById("adm5").value]
+    ["5. Example of correcting error", document.getElementById("adm5").value],
+    ["6. Rate yourself for the administrative tasks out of 10", document.getElementById("adm6").value],
+    ["7. Rate yourself for the Excel projects and formulas out of 10", document.getElementById("adm7").value]
   ];
   if(y>270){doc.addPage();y=20;}
   doc.setFont("helvetica","bold"); doc.text("Admin Questions & Answers:",10,y); y+=6;
@@ -303,14 +303,12 @@ function downloadPDF(){
     y+=4;
   });
 
-  // Summary
   if(y>270){doc.addPage(); y=20;}
   doc.setFont("helvetica","bold"); doc.text("Summary & Recommendation:",10,y); y+=6;
   let summaryText=document.getElementById("summary").innerText;
   let lines=doc.splitTextToSize(summaryText,170);
   lines.forEach(line=>{if(y>270){doc.addPage();y=20;} doc.text(line,12,y); y+=6;});
 
-  // Certificate if applicable
   if(!document.getElementById("certificate").classList.contains("hidden")){
     doc.addPage();
     doc.setFontSize(20); doc.setFont("helvetica","bold"); doc.setTextColor(190,25,130);
